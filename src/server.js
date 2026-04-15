@@ -5,6 +5,11 @@ const cors = require('cors');
 const cron = require('node-cron');
 const path = require('path');
 const { refreshNews, getCache, getSources } = require('./scraper');
+const { preMatch, generateInsight } = require('./intelligence');
+
+// ── In-memory clients store (persiste en RAM, se recarga con el server) ──────
+let clientsDB = [];
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -51,17 +56,8 @@ app.get('/api/sources', (req, res) => {
   res.json(getSources());
 });
 
-// POST /api/refresh — forzar actualización manual (Protegido para Admin)
+// POST /api/refresh — forzar actualización manual
 app.post('/api/refresh', async (req, res) => {
-  // 1. Extraemos la contraseña que manda el frontend en los headers
-  const adminToken = req.headers['x-admin-token'];
-
-  // 2. Comparamos con la variable de entorno
-  if (!process.env.ADMIN_TOKEN || adminToken !== process.env.ADMIN_TOKEN) {
-    return res.status(401).json({ success: false, error: 'No autorizado. Contraseña incorrecta.' });
-  }
-
-  // 3. Si es correcto, actualizamos
   try {
     const cache = await refreshNews();
     res.json({ success: true, total: cache.items.length, lastUpdated: cache.lastUpdated });
@@ -93,6 +89,96 @@ app.get('/api/stats', (req, res) => {
       .slice(0, 5)
       .map(([name, count]) => ({ name, count }))
   });
+});
+
+// ── CLIENTS API ───────────────────────────────────────────────────────────────
+
+// GET /api/clients — lista clientes cargados
+app.get('/api/clients', (req, res) => {
+  res.json({ clients: clientsDB, total: clientsDB.length });
+});
+
+// POST /api/clients — cargar/reemplazar lista de clientes (JSON array)
+app.post('/api/clients', (req, res) => {
+  const { clients } = req.body;
+  if (!Array.isArray(clients) || clients.length === 0) {
+    return res.status(400).json({ error: 'Se esperaba un array "clients"' });
+  }
+  // Validar campos mínimos
+  const validated = clients.filter(c => c.cuit && c.nombre && c.rubro).map(c => ({
+    cuit: String(c.cuit).trim(),
+    nombre: String(c.nombre).trim(),
+    rubro: String(c.rubro).trim(),
+    segmento: String(c.segmento || 'PYME').trim()
+  }));
+  clientsDB = validated;
+  res.json({ success: true, loaded: validated.length });
+});
+
+// DELETE /api/clients — limpiar lista
+app.delete('/api/clients', (req, res) => {
+  clientsDB = [];
+  res.json({ success: true });
+});
+
+// POST /api/match/news-to-clients — para una noticia AR, ¿qué clientes aplican?
+// Body: { newsId }
+app.post('/api/match/news-to-clients', async (req, res) => {
+  const { newsId } = req.body;
+  if (!newsId) return res.status(400).json({ error: 'newsId requerido' });
+  if (clientsDB.length === 0) return res.status(400).json({ error: 'No hay clientes cargados' });
+
+  const cache = getCache();
+  const news = cache.items.find(i => i.id === newsId && i.region === 'Argentina');
+  if (!news) return res.status(404).json({ error: 'Noticia no encontrada o no es de Argentina' });
+
+  // Pre-filtrar clientes que aplican semánticamente
+  const candidates = clientsDB.filter(c => preMatch(c, news));
+  if (candidates.length === 0) return res.json({ news, matches: [] });
+
+  // Generar insights con Claude (máx 10 clientes por llamada para no saturar)
+  const batch = candidates.slice(0, 10);
+  const insights = await generateInsight({ client: batch, news, mode: 'batch' });
+
+  // Combinar con datos del cliente
+  const matches = Array.isArray(insights)
+    ? insights.map(insight => ({
+        ...insight,
+        cliente: batch.find(c => c.cuit === insight.cuit) || batch[0]
+      }))
+    : [];
+
+  res.json({ news, matches });
+});
+
+// POST /api/match/client-to-news — para un cliente, ¿qué noticias AR aplican?
+// Body: { cuit }
+app.post('/api/match/client-to-news', async (req, res) => {
+  const { cuit } = req.body;
+  if (!cuit) return res.status(400).json({ error: 'cuit requerido' });
+
+  const client = clientsDB.find(c => c.cuit === String(cuit));
+  if (!client) return res.status(404).json({ error: 'Cliente no encontrado' });
+
+  const cache = getCache();
+  const arNews = cache.items.filter(i => i.region === 'Argentina');
+  const candidates = arNews.filter(n => preMatch(client, n)).slice(0, 8);
+
+  if (candidates.length === 0) return res.json({ client, matches: [] });
+
+  // Generar insight para cada noticia candidata
+  const matches = await Promise.all(
+    candidates.map(async news => {
+      const insight = await generateInsight({ client, news, mode: 'pitch' });
+      return { news, insight };
+    })
+  );
+
+  // Ordenar por relevancia
+  const order = { ALTA: 0, MEDIA: 1, BAJA: 2 };
+  matches.sort((a, b) => (order[a.insight?.relevancia] ?? 1) - (order[b.insight?.relevancia] ?? 1));
+
+  res.json({ client, matches });
 });
 
 // Fallback → SPA
