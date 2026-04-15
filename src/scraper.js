@@ -1,105 +1,58 @@
-// src/scraper.js — Agregador de noticias de innovación bancaria/fintech
+// src/scraper.js — Fuentes 100% argentinas de banca, fintech y productos financieros
 const RSSParser = require('rss-parser');
-const fetch = require('node-fetch');
 
 const parser = new RSSParser({
-  timeout: 10000,
-  headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; BINDmark/1.0)'
-  }
+  timeout: 12000,
+  headers: { 'User-Agent': 'Mozilla/5.0 (compatible; BINDmark/2.0)' }
 });
 
-// ── Fuentes RSS de innovación bancaria y fintech ──────────────────────────────
+// ── Fuentes argentinas ────────────────────────────────────────────────────────
 const RSS_SOURCES = [
-  {
-    name: 'The Financial Brand',
-    url: 'https://thefinancialbrand.com/feed/',
-    category: 'Innovación Bancaria',
-    region: 'Global'
-  },
-  {
-    name: 'Finextra',
-    url: 'https://www.finextra.com/rss/headlines.aspx',
-    category: 'Fintech',
-    region: 'Global'
-  },
-  {
-    name: 'Banking Technology',
-    url: 'https://www.bankingtech.com/feed/',
-    category: 'Tecnología Bancaria',
-    region: 'Global'
-  },
-  {
-    name: 'Tearsheet',
-    url: 'https://tearsheet.co/feed/',
-    category: 'Fintech',
-    region: 'Global'
-  },
-  {
-    name: 'American Banker',
-    url: 'https://feeds.feedburner.com/americanbanker/latestnews',
-    category: 'Banca',
-    region: 'USA'
-  },
-  {
-    name: 'Finovate',
-    url: 'https://finovate.com/feed/',
-    category: 'Innovación',
-    region: 'Global'
-  },
-  {
-    name: 'PaymentsSource',
-    url: 'https://www.paymentssource.com/rss',
-    category: 'Pagos',
-    region: 'Global'
-  },
-  {
-    name: 'PYMNTS',
-    url: 'https://www.pymnts.com/feed/',
-    category: 'Pagos & Fintech',
-    region: 'Global'
-  },
-  {
-    name: 'iProUP Fintech',
-    url: 'https://www.iproup.com/rss/fintech',
-    category: 'Fintech',
-    region: 'Argentina'
-  },
-  {
-    name: 'Infobae Economía',
-    url: 'https://www.infobae.com/economia/rss/',
-    category: 'Banca',
-    region: 'Argentina'
-  }
+  { name: 'iProUP Fintech',        url: 'https://www.iproup.com/rss/fintech',                          category: 'Fintech AR' },
+  { name: 'iProUP Economía',       url: 'https://www.iproup.com/rss/economia',                         category: 'Economía AR' },
+  { name: 'Infobae Economía',      url: 'https://www.infobae.com/economia/rss/',                       category: 'Economía AR' },
+  { name: 'Ámbito Financiero',     url: 'https://www.ambito.com/rss/pages/economia.xml',               category: 'Finanzas AR' },
+  { name: 'El Cronista',           url: 'https://cronista.com/files/rss/economia.xml',                 category: 'Economía AR' },
+  { name: 'iProfesional Finanzas', url: 'https://www.iprofesional.com/rss/finanzas.xml',               category: 'Finanzas AR' },
+  { name: 'iProfesional Tech',     url: 'https://www.iprofesional.com/rss/tecnologia.xml',             category: 'Fintech AR' },
+  { name: 'La Nación Economía',    url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/categoria/economia/', category: 'Economía AR' },
+  { name: 'Clarín Economía',       url: 'https://www.clarin.com/rss/economia/',                        category: 'Economía AR' },
+  { name: 'Télam Economía',        url: 'https://www.telam.com.ar/rss/economia.xml',                   category: 'Economía AR' }
 ];
 
-// Palabras clave para filtrar solo noticias relevantes de productos bancarios/fintech
-const KEYWORDS = [
-  'banking', 'bank', 'fintech', 'neobank', 'digital bank',
-  'payment', 'lending', 'credit card', 'debit', 'wallet',
-  'open banking', 'api banking', 'embedded finance',
-  'bnpl', 'buy now pay later', 'crypto', 'blockchain',
-  'mobile banking', 'challenger bank', 'product launch',
-  'feature', 'innovation', 'launch', 'release', 'new',
-  'banca', 'banco', 'fintech', 'billetera', 'tarjeta',
-  'pagos', 'crédito', 'cuenta', 'digital', 'app bancaria',
-  'neobank', 'mercadopago', 'uala', 'naranja x', 'brubank',
-  'cbu', 'alias', 'transferencia', 'qr', 'pos'
+// ── Keywords bancarios y fintech AR ──────────────────────────────────────────
+const BANKING_KEYWORDS = [
+  'crédito','préstamo','tarjeta','cuenta','caja de ahorro','cuenta corriente',
+  'plazo fijo','fondo','inversión','leasing','factoring','cheque',
+  'home banking','banca digital','billetera','wallet','transferencia',
+  'débito','cuota','financiamiento','línea de crédito','descubierto',
+  'banco','fintech','neobank','mercadopago','mercado pago','uala','ualá',
+  'naranja x','brubank','wilobank','bind','galicia','santander','bbva',
+  'hsbc','icbc','macro','patagonia','supervielle','ciudad','provincia',
+  'nación','bapro','itaú','comafi','hipotecario',
+  'bcra','banco central','tasa','tna','tea','regulación bancaria',
+  'comunicación bcra','sgr','garantía','pyme','mipyme',
+  'qr','pos','pago','cobro','echeq','cheque electrónico',
+  'debin','transferencia inmediata','cvu','cbu','open banking',
+  'bnpl','cuotas sin interés','ahora 12',
+  'seguro','ahorro','jubilación','anses',
+  'agro','campo','exportación','importación','dólar','tipo de cambio',
+  'industria','comercio','empresa','negocio'
 ];
 
-// Fuentes que no funcionaron en el último ciclo (para skip dinámico)
 const failedSources = new Set();
 
 function isRelevant(text) {
   const lower = (text || '').toLowerCase();
-  return KEYWORDS.some(kw => lower.includes(kw));
+  return BANKING_KEYWORDS.some(kw => lower.includes(kw));
 }
 
 function isRecent(dateStr) {
-  if (!dateStr) return true; // si no hay fecha, lo incluimos
+  if (!dateStr) return true;
   const itemDate = new Date(dateStr);
+  if (isNaN(itemDate.getTime())) return true;
   const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 7); // solo últimos 7 días
+  cutoff.setDate(cutoff.getDate() - 7);
   return itemDate >= cutoff;
 }
 
@@ -108,17 +61,19 @@ async function fetchFeed(source) {
     const feed = await parser.parseURL(source.url);
     const items = (feed.items || [])
       .filter(item => isRecent(item.pubDate || item.isoDate))
-      .filter(item => isRelevant(item.title + ' ' + (item.contentSnippet || '')))
-      .slice(0, 15)
+      .filter(item => isRelevant(item.title + ' ' + (item.contentSnippet || item.content || '')))
+      .slice(0, 20)
       .map(item => ({
-        id: Buffer.from(item.link || item.title || Math.random().toString()).toString('base64').slice(0, 16),
-        title: item.title || 'Sin título',
-        summary: (item.contentSnippet || item.content || '').slice(0, 200).trim(),
+        id: Buffer.from((item.link || item.guid || item.title || Math.random().toString()) + source.name)
+              .toString('base64').replace(/[^a-zA-Z0-9]/g, '').slice(0, 16),
+        title: (item.title || 'Sin título').replace(/<[^>]*>/g, '').trim(),
+        summary: (item.contentSnippet || item.content || '')
+                  .replace(/<[^>]*>/g, '').slice(0, 250).trim(),
         url: item.link || '#',
         date: item.pubDate || item.isoDate || new Date().toISOString(),
         source: source.name,
         category: source.category,
-        region: source.region
+        region: 'Argentina'
       }));
 
     if (items.length > 0) failedSources.delete(source.name);
@@ -130,30 +85,21 @@ async function fetchFeed(source) {
   }
 }
 
-// Cache en memoria
-let cache = {
-  items: [],
-  lastUpdated: null,
-  failedSources: []
-};
+let cache = { items: [], lastUpdated: null, failedSources: [] };
 
 async function refreshNews() {
-  console.log('[BINDmark] Refreshing news feeds...');
+  console.log('[BINDmark] Refreshing Argentine banking news...');
   const results = await Promise.allSettled(RSS_SOURCES.map(s => fetchFeed(s)));
+  const allItems = results.filter(r => r.status === 'fulfilled').flatMap(r => r.value);
 
-  const allItems = results
-    .filter(r => r.status === 'fulfilled')
-    .flatMap(r => r.value);
-
-  // Deduplicar por URL
   const seen = new Set();
   const unique = allItems.filter(item => {
-    if (seen.has(item.url)) return false;
-    seen.add(item.url);
+    const key = item.url === '#' ? item.title : item.url;
+    if (seen.has(key)) return false;
+    seen.add(key);
     return true;
   });
 
-  // Ordenar por fecha más reciente
   unique.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   cache = {
@@ -162,19 +108,13 @@ async function refreshNews() {
     failedSources: Array.from(failedSources)
   };
 
-  console.log(`[BINDmark] Loaded ${unique.length} items from ${RSS_SOURCES.length} sources`);
+  console.log(`[BINDmark] ${unique.length} AR banking items loaded`);
   return cache;
 }
 
-function getCache() {
-  return cache;
-}
-
+function getCache() { return cache; }
 function getSources() {
-  return RSS_SOURCES.map(s => ({
-    ...s,
-    status: failedSources.has(s.name) ? 'error' : 'ok'
-  }));
+  return RSS_SOURCES.map(s => ({ ...s, region: 'Argentina', status: failedSources.has(s.name) ? 'error' : 'ok' }));
 }
 
 module.exports = { refreshNews, getCache, getSources };
