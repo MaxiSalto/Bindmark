@@ -51,8 +51,17 @@ app.get('/api/sources', (req, res) => {
   res.json(getSources());
 });
 
-// POST /api/refresh — forzar actualización manual
+// POST /api/refresh — forzar actualización manual (Protegido para Admin)
 app.post('/api/refresh', async (req, res) => {
+  // 1. Extraemos la contraseña que manda el frontend en los headers
+  const adminToken = req.headers['x-admin-token'];
+
+  // 2. Comparamos con la variable de entorno
+  if (!process.env.ADMIN_TOKEN || adminToken !== process.env.ADMIN_TOKEN) {
+    return res.status(401).json({ success: false, error: 'No autorizado. Contraseña incorrecta.' });
+  }
+
+  // 3. Si es correcto, actualizamos
   try {
     const cache = await refreshNews();
     res.json({ success: true, total: cache.items.length, lastUpdated: cache.lastUpdated });
