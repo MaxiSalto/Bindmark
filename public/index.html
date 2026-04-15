@@ -754,18 +754,41 @@
   }
 
   async function forceRefresh() {
+    // Pedimos la contraseña mediante un prompt del navegador
+    const pass = prompt("🔒 Ingrese la contraseña de administrador para actualizar:");
+    
+    // Si el usuario cancela o no escribe nada, cortamos la función
+    if (!pass) return; 
+
     const btn = document.getElementById('refreshBtn');
     btn.disabled = true;
     btn.textContent = '↻ ACTUALIZANDO...';
     document.getElementById('statusDot').className = 'status-dot loading';
 
     try {
-      await fetch('/api/refresh', { method: 'POST' });
-      await loadNews();
-    } catch(e) {}
+      // Enviamos la petición con la contraseña en los headers
+      const res = await fetch('/api/refresh', { 
+        method: 'POST',
+        headers: {
+          'x-admin-token': pass
+        }
+      });
 
-    btn.disabled = false;
-    btn.textContent = '↻ ACTUALIZAR';
+      if (!res.ok) {
+        if (res.status === 401) throw new Error("Contraseña incorrecta");
+        throw new Error("Error en el servidor");
+      }
+
+      await loadNews();
+      alert("✅ ¡Noticias actualizadas con éxito!");
+    } catch(e) {
+      alert("❌ Error: " + e.message);
+      document.getElementById('statusDot').className = 'status-dot live';
+    } finally {
+      // Siempre volvemos el botón a la normalidad
+      btn.disabled = false;
+      btn.textContent = '↻ ACTUALIZAR';
+    }
   }
 
   // Auto-refresh cada 5 minutos en el cliente
