@@ -3,189 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BINDmark — Radar de Innovación Bancaria</title>
+  <title>BINDmark — Radar Bancario Argentina</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     :root {
-      --bind-yellow: #FFE600;
-      --bind-blue:   #1A19FF;
-      --bind-navy:   #0D0C3A;
-      --bind-white:  #FFFFFF;
-      --bind-gray:   #F4F4F4;
-      --bind-mid:    #6B6B8A;
-      --bind-border: #E2E2EF;
-      --bind-red:    #FF3366;
-      --bind-green:  #00C46A;
-      --bind-orange: #FF8C00;
-      --font-mono: 'Space Mono', monospace;
-      --font-sans: 'DM Sans', sans-serif;
+      --yellow: #FFE600;
+      --blue:   #1A19FF;
+      --navy:   #0D0C3A;
+      --white:  #FFFFFF;
+      --gray:   #F4F4F4;
+      --mid:    #6B6B8A;
+      --border: #E2E2EF;
+      --red:    #FF3366;
+      --green:  #00C46A;
+      --orange: #FF8C00;
+      --mono: 'Space Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font-sans); background: var(--bind-white); color: var(--bind-navy); min-height: 100vh; }
+    body { font-family: var(--sans); background: var(--white); color: var(--navy); min-height: 100vh; }
 
     /* HEADER */
-    header { background: var(--bind-yellow); border-bottom: 3px solid var(--bind-navy); padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    header { background: var(--yellow); border-bottom: 3px solid var(--navy); padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
     .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .logo-icon { width: 36px; height: 36px; }
-    .logo-text { font-family: var(--font-mono); font-weight: 700; font-size: 1.3rem; color: var(--bind-navy); }
-    .logo-badge { background: var(--bind-blue); color: var(--bind-white); font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; letter-spacing: 1px; }
-    .header-right { display: flex; align-items: center; gap: 1rem; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bind-mid); display: inline-block; transition: background 0.3s; }
-    .status-dot.live { background: var(--bind-green); animation: pulse 2s infinite; }
-    .status-dot.loading { background: var(--bind-blue); animation: pulse 1s infinite; }
+    .logo-text { font-family: var(--mono); font-weight: 700; font-size: 1.3rem; color: var(--navy); }
+    .logo-badge { background: var(--blue); color: var(--white); font-family: var(--mono); font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; letter-spacing: 1px; }
+    .hdr-right { display: flex; align-items: center; gap: 1rem; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mid); display: inline-block; }
+    .dot.live { background: var(--green); animation: pulse 2s infinite; }
+    .dot.loading { background: var(--blue); animation: pulse 1s infinite; }
     @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
-    #last-update { font-family: var(--font-mono); font-size: 0.7rem; color: var(--bind-navy); opacity: 0.6; }
-    .btn-refresh { background: var(--bind-navy); color: var(--bind-yellow); border: none; padding: 8px 16px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.15s; }
-    .btn-refresh:hover { background: var(--bind-blue); transform: translateY(-1px); }
-    .btn-refresh:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    #last-update { font-family: var(--mono); font-size: 0.7rem; color: var(--navy); opacity: 0.6; }
+    .btn-refresh { background: var(--navy); color: var(--yellow); border: none; padding: 8px 16px; border-radius: 6px; font-family: var(--mono); font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .btn-refresh:hover { background: var(--blue); }
+    .btn-refresh:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* TABS */
-    .tab-nav { background: var(--bind-navy); display: flex; padding: 0 2rem; border-bottom: 3px solid var(--bind-yellow); }
-    .tab-btn { padding: 14px 24px; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; letter-spacing: 0.5px; transition: all 0.15s; border-bottom: 3px solid transparent; margin-bottom: -3px; }
-    .tab-btn.active { color: var(--bind-yellow); border-bottom-color: var(--bind-yellow); }
+    .tab-nav { background: var(--navy); display: flex; padding: 0 2rem; border-bottom: 3px solid var(--yellow); }
+    .tab-btn { padding: 14px 24px; font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: all 0.15s; border-bottom: 3px solid transparent; margin-bottom: -3px; }
+    .tab-btn.active { color: var(--yellow); border-bottom-color: var(--yellow); }
     .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.7); }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
     /* HERO */
-    .hero-strip { background: var(--bind-navy); color: var(--bind-white); padding: 2.5rem 2rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
-    .hero-left h1 { font-family: var(--font-mono); font-size: clamp(1.5rem,3vw,2.2rem); font-weight: 700; line-height: 1.1; color: var(--bind-yellow); margin-bottom: 0.5rem; }
-    .hero-left p { font-size: 0.9rem; color: rgba(255,255,255,0.6); max-width: 480px; line-height: 1.5; }
-    .stats-row { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .stat-box { text-align: right; }
-    .stat-box .num { font-family: var(--font-mono); font-size: 2rem; font-weight: 700; color: var(--bind-yellow); display: block; }
-    .stat-box .lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.45); }
+    .hero { background: var(--navy); color: var(--white); padding: 2rem 2rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+    .hero h1 { font-family: var(--mono); font-size: clamp(1.4rem,3vw,2rem); font-weight: 700; color: var(--yellow); margin-bottom: 0.4rem; line-height: 1.1; }
+    .hero p { font-size: 0.88rem; color: rgba(255,255,255,0.55); max-width: 500px; line-height: 1.5; }
+    .stats { display: flex; gap: 1.5rem; }
+    .stat .num { font-family: var(--mono); font-size: 2rem; font-weight: 700; color: var(--yellow); display: block; }
+    .stat .lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.4); }
 
-    /* CONTROLS */
-    .controls-bar { background: var(--bind-gray); border-bottom: 1px solid var(--bind-border); padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-    .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 400px; }
-    .search-wrap input { width: 100%; padding: 10px 14px 10px 40px; border: 2px solid var(--bind-border); border-radius: 8px; font-family: var(--font-sans); font-size: 0.9rem; background: var(--bind-white); color: var(--bind-navy); outline: none; transition: border-color 0.2s; }
-    .search-wrap input:focus { border-color: var(--bind-blue); }
-    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.4; font-size: 1rem; }
+    /* SEARCH BAR */
+    .search-bar { background: var(--gray); border-bottom: 1px solid var(--border); padding: 0.9rem 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    .sw { position: relative; flex: 1; min-width: 200px; max-width: 500px; }
+    .sw input { width: 100%; padding: 10px 14px 10px 40px; border: 2px solid var(--border); border-radius: 8px; font-family: var(--sans); font-size: 0.9rem; background: var(--white); color: var(--navy); outline: none; }
+    .sw input:focus { border-color: var(--blue); }
+    .sw .si { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.4; }
     .filter-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .filter-btn { padding: 8px 14px; border: 2px solid var(--bind-border); border-radius: 20px; background: var(--bind-white); color: var(--bind-mid); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-    .filter-btn.active { background: var(--bind-blue); border-color: var(--bind-blue); color: var(--bind-white); }
-    .filter-btn:hover:not(.active) { border-color: var(--bind-blue); color: var(--bind-blue); }
+    .fb { padding: 7px 14px; border: 2px solid var(--border); border-radius: 20px; background: var(--white); color: var(--mid); font-family: var(--sans); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .fb.active { background: var(--blue); border-color: var(--blue); color: var(--white); }
+    .fb:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
 
-    /* NEWS GRID */
+    /* NEWS */
     main { padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
-    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .results-count { font-family: var(--font-mono); font-size: 0.8rem; color: var(--bind-mid); }
-    .results-count span { color: var(--bind-blue); font-weight: 700; }
-    .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
-    .news-grid .card:first-child { grid-column: 1 / -1; }
-    .card { background: var(--bind-white); border: 2px solid var(--bind-border); border-radius: 12px; padding: 1.25rem; transition: all 0.2s; display: flex; flex-direction: column; gap: 0.75rem; text-decoration: none; color: inherit; cursor: pointer; }
-    .card:hover { border-color: var(--bind-blue); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,25,255,0.1); }
-    .news-grid .card:first-child { flex-direction: row; align-items: flex-start; background: linear-gradient(135deg, var(--bind-navy) 0%, #1A19FF22 100%); border-color: var(--bind-blue); padding: 2rem; }
-    .news-grid .card:first-child .card-content { flex: 1; display: flex; flex-direction: column; gap: 0.75rem; }
-    .news-grid .card:first-child .card-title { font-size: 1.4rem; color: var(--bind-yellow); }
-    .news-grid .card:first-child .card-summary { color: rgba(255,255,255,0.7); }
-    .news-grid .card:first-child .card-meta { color: rgba(255,255,255,0.4); }
-    .news-grid .card:first-child .tag { background: rgba(255,230,0,0.15); color: var(--bind-yellow); border-color: rgba(255,230,0,0.3); }
-    .featured-badge { background: var(--bind-yellow); color: var(--bind-navy); font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; padding: 3px 8px; border-radius: 3px; letter-spacing: 1px; margin-right: 1rem; flex-shrink: 0; align-self: flex-start; margin-top: 4px; }
-    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-    .tag { font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--bind-border); color: var(--bind-mid); letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
-    .tag.arg { background: rgba(26,25,255,0.06); color: var(--bind-blue); border-color: rgba(26,25,255,0.2); }
-    .tag.global { background: rgba(0,196,106,0.08); color: var(--bind-green); border-color: rgba(0,196,106,0.2); }
-    .tag.usa { background: rgba(255,51,102,0.08); color: var(--bind-red); border-color: rgba(255,51,102,0.2); }
-    .card-date { font-family: var(--font-mono); font-size: 0.65rem; color: var(--bind-mid); }
-    .card-title { font-weight: 700; font-size: 1rem; line-height: 1.35; color: var(--bind-navy); }
-    .card-summary { font-size: 0.85rem; line-height: 1.55; color: var(--bind-mid); flex: 1; }
-    .card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: auto; font-size: 0.75rem; color: var(--bind-mid); }
-    .card-source { font-family: var(--font-mono); font-weight: 700; font-size: 0.7rem; }
-    .card-link { color: var(--bind-blue); font-weight: 600; font-size: 0.8rem; }
-    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--bind-mid); }
-    .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
-    .empty-state h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--bind-navy); }
-    .skeleton { background: linear-gradient(90deg, var(--bind-gray) 25%, #E8E8F0 50%, var(--bind-gray) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
-    @keyframes shimmer { 0%{background-position:200% 0}100%{background-position:-200% 0} }
-    .skeleton-card { border: 2px solid var(--bind-border); border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
-    .sk-line{height:14px}.sk-title{height:20px;width:80%}.sk-summary{height:12px}.sk-summary-2{height:12px;width:65%}
-    .sources-toggle { background: none; border: none; cursor: pointer; font-family: var(--font-mono); font-size: 0.75rem; color: var(--bind-mid); display: flex; align-items: center; gap: 6px; padding: 8px 0; text-decoration: underline; }
-    .sources-panel { display: none; background: var(--bind-gray); border: 1px solid var(--bind-border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; }
-    .sources-panel.open { display: block; }
-    .sources-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
-    .source-pill { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; border: 1px solid var(--bind-border); background: var(--bind-white); }
-    .source-pill.ok { border-color: var(--bind-green); }
-    .source-pill.error { border-color: var(--bind-red); color: var(--bind-red); opacity: 0.7; }
-    .source-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .source-dot.ok { background: var(--bind-green); }
-    .source-dot.error { background: var(--bind-red); }
+    .rh { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .rc { font-family: var(--mono); font-size: 0.8rem; color: var(--mid); }
+    .rc span { color: var(--blue); font-weight: 700; }
+    .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+    .news-grid .card:first-child { grid-column: 1/-1; }
+    .card { background: var(--white); border: 2px solid var(--border); border-radius: 12px; padding: 1.2rem; transition: all 0.2s; display: flex; flex-direction: column; gap: 0.7rem; text-decoration: none; color: inherit; }
+    .card:hover { border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,25,255,0.1); }
+    .news-grid .card:first-child { flex-direction: row; background: linear-gradient(135deg, var(--navy), #1A19FF18); border-color: var(--blue); padding: 1.8rem; }
+    .news-grid .card:first-child .cc { flex: 1; display: flex; flex-direction: column; gap: 0.7rem; }
+    .news-grid .card:first-child .ct { font-size: 1.3rem; color: var(--yellow); }
+    .news-grid .card:first-child .cs { color: rgba(255,255,255,0.65); }
+    .news-grid .card:first-child .cm { color: rgba(255,255,255,0.4); }
+    .news-grid .card:first-child .tag { background: rgba(255,230,0,0.15); color: var(--yellow); border-color: rgba(255,230,0,0.3); }
+    .feat-badge { background: var(--yellow); color: var(--navy); font-family: var(--mono); font-size: 0.6rem; font-weight: 700; padding: 3px 8px; border-radius: 3px; flex-shrink: 0; align-self: flex-start; margin-right: 1rem; margin-top: 4px; }
+    .ctop { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .tag { font-family: var(--mono); font-size: 0.62rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border); color: var(--mid); letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
+    .tag.fintech  { background: rgba(26,25,255,0.06); color: var(--blue); border-color: rgba(26,25,255,0.2); }
+    .tag.economia { background: rgba(0,196,106,0.07); color: var(--green); border-color: rgba(0,196,106,0.2); }
+    .tag.finanzas { background: rgba(255,140,0,0.08); color: var(--orange); border-color: rgba(255,140,0,0.25); }
+    .cdate { font-family: var(--mono); font-size: 0.63rem; color: var(--mid); }
+    .ct { font-weight: 700; font-size: 0.97rem; line-height: 1.35; }
+    .cs { font-size: 0.84rem; line-height: 1.55; color: var(--mid); flex: 1; }
+    .cm { display: flex; align-items: center; justify-content: space-between; margin-top: auto; font-size: 0.74rem; color: var(--mid); }
+    .csrc { font-family: var(--mono); font-weight: 700; font-size: 0.68rem; }
+    .clink { color: var(--blue); font-weight: 600; font-size: 0.78rem; }
+    .empty { text-align: center; padding: 4rem 2rem; color: var(--mid); }
+    .empty .ei { font-size: 2.5rem; margin-bottom: 1rem; }
+    .empty h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--navy); }
+    .sk { background: linear-gradient(90deg,var(--gray) 25%,#E8E8F0 50%,var(--gray) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .skc { border: 2px solid var(--border); border-radius: 12px; padding: 1.2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .sk-t{height:20px;width:80%}.sk-s{height:12px}.sk-s2{height:12px;width:60%}
+    .src-toggle { background: none; border: none; cursor: pointer; font-family: var(--mono); font-size: 0.73rem; color: var(--mid); text-decoration: underline; }
+    .src-panel { display: none; background: var(--gray); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; }
+    .src-panel.open { display: block; }
+    .src-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+    .src-pill { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.73rem; border: 1px solid var(--border); background: var(--white); }
+    .src-pill.ok { border-color: var(--green); }
+    .src-pill.error { border-color: var(--red); color: var(--red); opacity: 0.7; }
+    .sdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .sdot.ok { background: var(--green); }
+    .sdot.error { background: var(--red); }
 
     /* CLIENTES TAB */
-    .clients-main { padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
-    .upload-zone { border: 2px dashed var(--bind-border); border-radius: 16px; padding: 3rem 2rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bind-gray); margin-bottom: 1.5rem; }
-    .upload-zone:hover, .upload-zone.dragover { border-color: var(--bind-blue); background: rgba(26,25,255,0.04); }
-    .upload-zone .upload-icon { font-size: 2.5rem; margin-bottom: 1rem; }
-    .upload-zone h3 { font-family: var(--font-mono); font-size: 1rem; margin-bottom: 0.4rem; }
-    .upload-zone p { font-size: 0.85rem; color: var(--bind-mid); margin-bottom: 1.2rem; }
-    .upload-zone .hint { font-family: var(--font-mono); font-size: 0.7rem; color: var(--bind-mid); background: var(--bind-white); border: 1px solid var(--bind-border); border-radius: 6px; padding: 8px 16px; display: inline-block; }
+    .cli-main { padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+    .upload-zone { border: 2px dashed var(--border); border-radius: 14px; padding: 2.5rem 2rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--gray); margin-bottom: 1.5rem; }
+    .upload-zone:hover,.upload-zone.drag { border-color: var(--blue); background: rgba(26,25,255,0.04); }
+    .uz-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .uz-title { font-family: var(--mono); font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .uz-sub { font-size: 0.84rem; color: var(--mid); margin-bottom: 1rem; }
+    .uz-hint { font-family: var(--mono); font-size: 0.68rem; color: var(--mid); background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 7px 14px; display: inline-block; }
     #fileInput { display: none; }
-    .clients-bar { display: flex; align-items: center; justify-content: space-between; background: var(--bind-navy); color: var(--bind-white); border-radius: 10px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-    .clients-bar-left { display: flex; align-items: center; gap: 1rem; }
-    .clients-count-badge { background: var(--bind-yellow); color: var(--bind-navy); font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; }
-    .clients-bar-text { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
-    .btn-sm { padding: 7px 14px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; }
-    .btn-primary { background: var(--bind-blue); color: var(--bind-white); }
-    .btn-danger { background: transparent; color: var(--bind-red); border: 1px solid var(--bind-red); }
-    .btn-danger:hover { background: var(--bind-red); color: var(--bind-white); }
-    .btn-yellow { background: var(--bind-yellow); color: var(--bind-navy); }
-    .btn-yellow:hover { opacity: 0.85; }
-    .btn-yellow:disabled { opacity: 0.4; cursor: not-allowed; }
-    .view-toggle { display: flex; background: var(--bind-gray); border: 1px solid var(--bind-border); border-radius: 8px; overflow: hidden; width: fit-content; margin-bottom: 1.5rem; }
-    .view-btn { padding: 9px 18px; background: none; border: none; cursor: pointer; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: var(--bind-mid); transition: all 0.15s; }
-    .view-btn.active { background: var(--bind-blue); color: var(--bind-white); }
-    .match-card { border: 1.5px solid var(--bind-border); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; }
-    .match-card.alta { border-left: 4px solid var(--bind-green); }
-    .match-card.media { border-left: 4px solid var(--bind-orange); }
-    .match-card.baja { border-left: 4px solid var(--bind-mid); }
-    .match-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-    .match-client-name { font-weight: 700; font-size: 0.95rem; }
-    .match-client-meta { font-size: 0.75rem; color: var(--bind-mid); margin-top: 2px; }
-    .relevancia-badge { font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
-    .relevancia-badge.alta { background: rgba(0,196,106,0.12); color: var(--bind-green); border: 1px solid rgba(0,196,106,0.3); }
-    .relevancia-badge.media { background: rgba(255,140,0,0.1); color: var(--bind-orange); border: 1px solid rgba(255,140,0,0.3); }
-    .relevancia-badge.baja { background: var(--bind-gray); color: var(--bind-mid); border: 1px solid var(--bind-border); }
-    .match-oportunidad { font-family: var(--font-mono); font-size: 0.78rem; color: var(--bind-blue); font-weight: 700; margin-bottom: 0.5rem; }
-    .match-pitch { font-size: 0.85rem; line-height: 1.55; color: var(--bind-navy); margin-bottom: 0.5rem; }
-    .match-accion { font-size: 0.8rem; font-weight: 600; color: var(--bind-mid); padding-left: 1rem; border-left: 2px solid var(--bind-blue); }
-    .generating-indicator { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--bind-mid); padding: 2rem; }
-    .generating-dots span { display: inline-block; width: 7px; height: 7px; background: var(--bind-blue); border-radius: 50%; animation: dot-bounce 1.2s infinite; margin: 0 2px; }
-    .generating-dots span:nth-child(2){animation-delay:0.2s} .generating-dots span:nth-child(3){animation-delay:0.4s}
-    @keyframes dot-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
-    .intel-layout { display: grid; grid-template-columns: 270px 1fr; gap: 1.5rem; }
-    .client-sidebar { border: 1.5px solid var(--bind-border); border-radius: 10px; overflow: hidden; height: fit-content; max-height: 75vh; overflow-y: auto; }
-    .client-sidebar-header { background: var(--bind-navy); color: var(--bind-white); padding: 0.75rem 1rem; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; position: sticky; top: 0; }
-    .client-list-item { padding: 0.75rem 1rem; border-bottom: 1px solid var(--bind-border); cursor: pointer; transition: background 0.15s; }
-    .client-list-item:hover { background: rgba(26,25,255,0.04); }
-    .client-list-item.active { background: rgba(26,25,255,0.08); border-right: 3px solid var(--bind-blue); }
-    .cli-name { font-weight: 600; font-size: 0.85rem; }
-    .cli-meta { font-size: 0.72rem; color: var(--bind-mid); margin-top: 2px; }
-    .seg-badge { font-family: var(--font-mono); font-size: 0.6rem; padding: 1px 6px; border-radius: 3px; font-weight: 700; }
-    .seg-badge.PYME { background: rgba(26,25,255,0.1); color: var(--bind-blue); }
-    .seg-badge.MEGRA { background: rgba(255,140,0,0.12); color: var(--bind-orange); }
-    .seg-badge.CORPO { background: rgba(0,196,106,0.1); color: var(--bind-green); }
-    .ar-news-item { border: 1.5px solid var(--bind-border); border-radius: 10px; overflow: hidden; margin-bottom: 0.75rem; }
-    .ar-news-header { padding: 1rem 1.25rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; cursor: pointer; background: var(--bind-white); transition: background 0.15s; }
-    .ar-news-header:hover { background: var(--bind-gray); }
-    .ar-news-title { font-weight: 700; font-size: 0.95rem; line-height: 1.35; flex: 1; }
-    .ar-news-meta { font-family: var(--font-mono); font-size: 0.65rem; color: var(--bind-mid); margin-top: 4px; }
-    .ar-news-expand { font-family: var(--font-mono); font-size: 0.7rem; color: var(--bind-blue); flex-shrink: 0; font-weight: 700; }
-    .ar-news-matches { padding: 0 1.25rem 1.25rem; display: none; border-top: 1px solid var(--bind-border); padding-top: 1rem; }
-    .ar-news-matches.open { display: block; }
+    #uploadErr { color: var(--red); font-size: 0.8rem; font-family: var(--mono); padding: 0.5rem 0; display: none; }
+    .cli-bar { display: flex; align-items: center; justify-content: space-between; background: var(--navy); color: var(--white); border-radius: 10px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+    .cli-bar-left { display: flex; align-items: center; gap: 1rem; }
+    .cli-badge { background: var(--yellow); color: var(--navy); font-family: var(--mono); font-weight: 700; font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; }
+    .cli-bar-txt { font-size: 0.84rem; color: rgba(255,255,255,0.55); }
+    .btn { padding: 7px 14px; border-radius: 6px; font-family: var(--mono); font-size: 0.75rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; }
+    .btn-y { background: var(--yellow); color: var(--navy); }
+    .btn-y:hover { opacity: 0.85; }
+    .btn-y:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-d { background: transparent; color: var(--red); border: 1px solid var(--red); }
+    .btn-d:hover { background: var(--red); color: var(--white); }
+    .view-toggle { display: flex; background: var(--gray); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; width: fit-content; margin-bottom: 1.5rem; }
+    .vb { padding: 8px 18px; background: none; border: none; cursor: pointer; font-family: var(--mono); font-size: 0.75rem; font-weight: 700; color: var(--mid); transition: all 0.15s; }
+    .vb.active { background: var(--blue); color: var(--white); }
+    .intel-wrap { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
+    .match-sum { font-family: var(--mono); font-size: 0.72rem; color: var(--mid); }
+    .intel-layout { display: grid; grid-template-columns: 265px 1fr; gap: 1.5rem; }
+    .cli-sidebar { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; max-height: 72vh; overflow-y: auto; }
+    .cli-sbhdr { background: var(--navy); color: var(--white); padding: 0.75rem 1rem; font-family: var(--mono); font-size: 0.73rem; font-weight: 700; position: sticky; top: 0; }
+    .cli-item { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+    .cli-item:hover { background: rgba(26,25,255,0.04); }
+    .cli-item.active { background: rgba(26,25,255,0.08); border-right: 3px solid var(--blue); }
+    .cin { font-weight: 600; font-size: 0.84rem; }
+    .cim { font-size: 0.7rem; color: var(--mid); margin-top: 2px; }
+    .seg { font-family: var(--mono); font-size: 0.6rem; padding: 1px 6px; border-radius: 3px; font-weight: 700; }
+    .seg.PYME  { background: rgba(26,25,255,0.1);  color: var(--blue);   }
+    .seg.MEGRA { background: rgba(255,140,0,0.12); color: var(--orange); }
+    .seg.CORPO { background: rgba(0,196,106,0.1);  color: var(--green);  }
+    .match-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 1.2rem; margin-bottom: 0.75rem; }
+    .match-card.alta  { border-left: 4px solid var(--green);  }
+    .match-card.media { border-left: 4px solid var(--orange); }
+    .match-card.baja  { border-left: 4px solid var(--mid);    }
+    .mhdr { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .mn { font-weight: 700; font-size: 0.94rem; }
+    .mm { font-size: 0.74rem; color: var(--mid); margin-top: 2px; }
+    .rel { font-family: var(--mono); font-size: 0.63rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+    .rel.alta  { background: rgba(0,196,106,0.12); color: var(--green);  border: 1px solid rgba(0,196,106,0.3); }
+    .rel.media { background: rgba(255,140,0,0.1);  color: var(--orange); border: 1px solid rgba(255,140,0,0.3);  }
+    .rel.baja  { background: var(--gray); color: var(--mid); border: 1px solid var(--border); }
+    .mop   { font-family: var(--mono); font-size: 0.76rem; color: var(--blue); font-weight: 700; margin-bottom: 0.5rem; }
+    .mpitch { font-size: 0.84rem; line-height: 1.55; margin-bottom: 0.5rem; }
+    .mac   { font-size: 0.8rem; font-weight: 600; color: var(--mid); padding-left: 1rem; border-left: 2px solid var(--blue); }
+    .gen-ind { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 0.8rem; color: var(--mid); padding: 2rem; }
+    .gdots span { display: inline-block; width: 7px; height: 7px; background: var(--blue); border-radius: 50%; animation: db 1.2s infinite; margin: 0 2px; }
+    .gdots span:nth-child(2){animation-delay:.2s}.gdots span:nth-child(3){animation-delay:.4s}
+    @keyframes db{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+    .ar-news-item { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 0.75rem; }
+    .ar-news-hdr { padding: 1rem 1.2rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; cursor: pointer; background: var(--white); transition: background 0.15s; }
+    .ar-news-hdr:hover { background: var(--gray); }
+    .ar-news-t { font-weight: 700; font-size: 0.93rem; line-height: 1.35; flex: 1; }
+    .ar-news-meta { font-family: var(--mono); font-size: 0.63rem; color: var(--mid); margin-top: 4px; }
+    .ar-expand { font-family: var(--mono); font-size: 0.68rem; color: var(--blue); flex-shrink: 0; font-weight: 700; white-space: nowrap; }
+    .ar-matches { padding: 0 1.2rem 1.2rem; display: none; border-top: 1px solid var(--border); padding-top: 1rem; }
+    .ar-matches.open { display: block; }
 
-    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--bind-border); font-family: var(--font-mono); font-size: 0.7rem; color: var(--bind-mid); margin-top: 3rem; }
-    footer strong { color: var(--bind-yellow); }
+    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 0.68rem; color: var(--mid); margin-top: 3rem; }
+    footer strong { color: var(--yellow); }
 
     @media(max-width:768px){
       .intel-layout{grid-template-columns:1fr}
-      header{padding:0 1rem}
-      .clients-main,main{padding:1rem}
+      header,.cli-main,main{padding-left:1rem;padding-right:1rem}
       .tab-btn{padding:12px 14px;font-size:0.7rem}
       .news-grid{grid-template-columns:1fr}
       .news-grid .card:first-child{flex-direction:column}
+      .hero{padding:1.5rem 1rem}
+      .search-bar{padding:0.9rem 1rem}
     }
   </style>
 </head>
@@ -193,124 +195,124 @@
 
 <header>
   <a class="logo" href="/">
-    <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg class="logo-icon" viewBox="0 0 36 36" fill="none">
       <polygon points="18,2 26,8 32,18 26,28 18,34 10,28 4,18 10,8" fill="#1A19FF"/>
       <polygon points="18,8 23,12 26,18 23,24 18,28 13,24 10,18 13,12" fill="#FFE600"/>
     </svg>
     <span class="logo-text">BINDmark</span>
-    <span class="logo-badge">RADAR</span>
+    <span class="logo-badge">AR</span>
   </a>
-  <div class="header-right">
-    <span class="status-dot" id="statusDot"></span>
+  <div class="hdr-right">
+    <span class="dot" id="statusDot"></span>
     <span id="last-update">cargando...</span>
     <button class="btn-refresh" id="refreshBtn" onclick="forceRefresh()">↻ ACTUALIZAR</button>
   </div>
 </header>
 
 <nav class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab('radar',this)">🌐 RADAR GLOBAL</button>
-  <button class="tab-btn" onclick="switchTab('clientes',this)">🇦🇷 INTELIGENCIA AR</button>
+  <button class="tab-btn active" onclick="switchTab('radar',this)">📰 NOTICIAS AR</button>
+  <button class="tab-btn" onclick="switchTab('clientes',this)">🏢 INTELIGENCIA COMERCIAL</button>
 </nav>
 
-<!-- TAB: RADAR GLOBAL -->
+<!-- TAB: NOTICIAS AR -->
 <div class="tab-panel active" id="tab-radar">
-  <div class="hero-strip">
-    <div class="hero-left">
-      <h1>Radar de<br>Innovación Bancaria</h1>
-      <p>Seguimiento en tiempo real de productos, features y lanzamientos fintech globales. Solo noticias de los últimos 7 días.</p>
+  <div class="hero">
+    <div>
+      <h1>Radar Bancario<br>Argentina</h1>
+      <p>Noticias de productos bancarios, fintech y economía argentina. Solo últimos 7 días. Fuentes 100% locales.</p>
     </div>
-    <div class="stats-row">
-      <div class="stat-box"><span class="num" id="stat-total">—</span><span class="lbl">Noticias activas</span></div>
-      <div class="stat-box"><span class="num" id="stat-sources">10</span><span class="lbl">Fuentes</span></div>
-      <div class="stat-box"><span class="num" id="stat-cats">6</span><span class="lbl">Categorías</span></div>
+    <div class="stats">
+      <div class="stat"><span class="num" id="stat-total">—</span><span class="lbl">Noticias activas</span></div>
+      <div class="stat"><span class="num" id="stat-sources">10</span><span class="lbl">Fuentes AR</span></div>
     </div>
   </div>
-  <div class="controls-bar">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Buscar: BNPL, wallet, open banking..." oninput="applyFilters()"/>
+
+  <div class="search-bar">
+    <div class="sw">
+      <span class="si">🔍</span>
+      <input type="text" id="searchInput" placeholder="Buscar: crédito, QR, BCRA, plazo fijo..." oninput="applyFilters()"/>
     </div>
     <div class="filter-group">
-      <button class="filter-btn active" data-region="all" onclick="setRegion(this)">Todos</button>
-      <button class="filter-btn" data-region="Global" onclick="setRegion(this)">🌐 Global</button>
-      <button class="filter-btn" data-region="Argentina" onclick="setRegion(this)">🇦🇷 Argentina</button>
-      <button class="filter-btn" data-region="USA" onclick="setRegion(this)">🇺🇸 USA</button>
+      <button class="fb active" data-cat="all" onclick="setCat(this)">Todos</button>
+      <button class="fb" data-cat="Fintech AR" onclick="setCat(this)">Fintech</button>
+      <button class="fb" data-cat="Finanzas AR" onclick="setCat(this)">Finanzas</button>
+      <button class="fb" data-cat="Economía AR" onclick="setCat(this)">Economía</button>
     </div>
   </div>
+
   <main>
-    <div class="results-header">
-      <div class="results-count">Mostrando <span id="visibleCount">—</span> noticias</div>
-      <button class="sources-toggle" onclick="toggleSources()">▸ Ver estado de fuentes</button>
+    <div class="rh">
+      <div class="rc">Mostrando <span id="visibleCount">—</span> noticias</div>
+      <button class="src-toggle" onclick="toggleSrc()">▸ Estado de fuentes</button>
     </div>
-    <div class="sources-panel" id="sourcesPanel">
-      <strong style="font-family:var(--font-mono);font-size:0.8rem;">Estado de fuentes RSS</strong>
-      <div class="sources-grid" id="sourcesList"></div>
+    <div class="src-panel" id="srcPanel">
+      <strong style="font-family:var(--mono);font-size:0.78rem">Fuentes RSS activas</strong>
+      <div class="src-grid" id="srcList"></div>
     </div>
     <div class="news-grid" id="newsGrid">
-      <div class="skeleton-card"><div class="skeleton sk-title"></div><div class="skeleton sk-summary"></div><div class="skeleton sk-summary-2"></div></div>
-      <div class="skeleton-card"><div class="skeleton sk-title"></div><div class="skeleton sk-summary"></div><div class="skeleton sk-summary-2"></div></div>
-      <div class="skeleton-card"><div class="skeleton sk-title"></div><div class="skeleton sk-summary"></div><div class="skeleton sk-summary-2"></div></div>
-      <div class="skeleton-card"><div class="skeleton sk-title"></div><div class="skeleton sk-summary"></div><div class="skeleton sk-summary-2"></div></div>
-      <div class="skeleton-card"><div class="skeleton sk-title"></div><div class="skeleton sk-summary"></div><div class="skeleton sk-summary-2"></div></div>
-      <div class="skeleton-card"><div class="skeleton sk-title"></div><div class="skeleton sk-summary"></div><div class="skeleton sk-summary-2"></div></div>
+      <div class="skc"><div class="sk sk-t"></div><div class="sk sk-s"></div><div class="sk sk-s2"></div></div>
+      <div class="skc"><div class="sk sk-t"></div><div class="sk sk-s"></div><div class="sk sk-s2"></div></div>
+      <div class="skc"><div class="sk sk-t"></div><div class="sk sk-s"></div><div class="sk sk-s2"></div></div>
+      <div class="skc"><div class="sk sk-t"></div><div class="sk sk-s"></div><div class="sk sk-s2"></div></div>
+      <div class="skc"><div class="sk sk-t"></div><div class="sk sk-s"></div><div class="sk sk-s2"></div></div>
+      <div class="skc"><div class="sk sk-t"></div><div class="sk sk-s"></div><div class="sk sk-s2"></div></div>
     </div>
   </main>
 </div>
 
-<!-- TAB: INTELIGENCIA AR -->
+<!-- TAB: INTELIGENCIA COMERCIAL -->
 <div class="tab-panel" id="tab-clientes">
-  <div class="clients-main">
+  <div class="cli-main">
 
     <div id="uploadSection">
       <div class="upload-zone" id="dropZone"
-           onclick="document.getElementById('fileInput').click()"
-           ondragover="event.preventDefault();this.classList.add('dragover')"
-           ondragleave="this.classList.remove('dragover')"
-           ondrop="handleDrop(event)">
-        <div class="upload-icon">📂</div>
-        <h3>Cargá tu cartera de clientes</h3>
-        <p>Arrastrá o hacé click para subir CSV o Excel (.xlsx)</p>
-        <div class="hint">Columnas: CUIT &nbsp;·&nbsp; NOMBRE &nbsp;·&nbsp; RUBRO &nbsp;·&nbsp; SEGMENTO (PYME / MEGRA / CORPO)</div>
+        onclick="document.getElementById('fileInput').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleDrop(event)">
+        <div class="uz-icon">📂</div>
+        <div class="uz-title">Cargá tu cartera de clientes</div>
+        <div class="uz-sub">Arrastrá o hacé click — CSV o Excel (.xlsx / .xls)</div>
+        <div class="uz-hint">Columnas: CUIT &nbsp;·&nbsp; NOMBRE &nbsp;·&nbsp; RUBRO &nbsp;·&nbsp; SEGMENTO (PYME / MEGRA / CORPO)</div>
       </div>
       <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" onchange="handleFileInput(event)"/>
-      <div id="uploadError" style="color:var(--bind-red);font-size:0.82rem;margin-top:0.5rem;display:none;font-family:var(--font-mono);padding:0.5rem 0"></div>
+      <div id="uploadErr"></div>
     </div>
 
-    <div class="clients-bar" id="clientsBar" style="display:none">
-      <div class="clients-bar-left">
-        <span class="clients-count-badge" id="clientsCountBadge">0 clientes</span>
-        <span class="clients-bar-text" id="clientsBarText">Cartera cargada</span>
+    <div class="cli-bar" id="cliBar" style="display:none">
+      <div class="cli-bar-left">
+        <span class="cli-badge" id="cliBadge">0 clientes</span>
+        <span class="cli-bar-txt" id="cliTxt">Cartera cargada</span>
       </div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
-        <button class="btn-sm btn-yellow" id="runMatchBtn" onclick="runIntelligence()">⚡ GENERAR INTELIGENCIA</button>
-        <button class="btn-sm btn-danger" onclick="clearClients()">✕ LIMPIAR</button>
+        <button class="btn btn-y" id="runBtn" onclick="runIntelligence()">⚡ GENERAR INTELIGENCIA</button>
+        <button class="btn btn-d" onclick="clearClients()">✕ LIMPIAR</button>
       </div>
     </div>
 
-    <div id="viewToggleSection" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:1rem">
+    <div id="viewSection" style="display:none">
+      <div class="intel-wrap">
         <div class="view-toggle">
-          <button class="view-btn active" id="viewByClientBtn" onclick="setView('by-client')">POR CLIENTE</button>
-          <button class="view-btn" id="viewByNewsBtn" onclick="setView('by-news')">POR NOTICIA</button>
+          <button class="vb active" id="vbClient" onclick="setView('by-client')">POR CLIENTE</button>
+          <button class="vb" id="vbNews" onclick="setView('by-news')">POR NOTICIA</button>
         </div>
-        <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--bind-mid)" id="matchSummary"></div>
+        <div class="match-sum" id="matchSum"></div>
       </div>
     </div>
 
-    <div id="matchResultsArea"></div>
+    <div id="matchArea"></div>
 
   </div>
 </div>
 
 <footer>
-  <strong>BINDmark</strong> — Laboratorio de Innovación · Solo noticias de los últimos 7 días · Actualización cada 30 min
+  <strong>BINDmark</strong> — Radar Bancario Argentina · Noticias últimos 7 días · Actualización cada 30 min
 </footer>
 
 <script>
 /* ── GLOBALS ── */
-let allItems = [], arNewsList = [], clientsList = [];
-let activeRegion = 'all', sourcesOpen = false;
-let matchData = null, currentView = 'by-client';
+let allItems = [], clientsList = [], matchData = null;
+let activeCat = 'all', srcOpen = false, currentView = 'by-client';
 
 /* ── TABS ── */
 function switchTab(tab, btn) {
@@ -320,104 +322,116 @@ function switchTab(tab, btn) {
   btn.classList.add('active');
 }
 
-/* ── RADAR TAB ── */
-function formatDate(iso) {
+/* ── UTILS ── */
+function fmtDate(iso) {
   if (!iso) return '';
-  const d = new Date(iso), now = new Date();
-  const diff = Math.floor((now - d) / 60000);
+  const d = new Date(iso), now = new Date(), diff = Math.floor((now - d) / 60000);
   if (diff < 60) return `hace ${diff}m`;
   if (diff < 1440) return `hace ${Math.floor(diff/60)}h`;
   return d.toLocaleDateString('es-AR', { day:'numeric', month:'short' });
 }
-function regionClass(r) { return r==='Argentina'?'arg':r==='USA'?'usa':'global'; }
+function tagClass(cat) {
+  if (!cat) return '';
+  const c = cat.toLowerCase();
+  if (c.includes('fintech')) return 'fintech';
+  if (c.includes('finanza')) return 'finanzas';
+  return 'economia';
+}
 
+/* ── NEWS RENDER ── */
 function renderCard(item, featured) {
+  const tc = tagClass(item.category);
   if (featured) return `<a class="card" href="${item.url}" target="_blank" rel="noopener">
-    <span class="featured-badge">DESTACADO</span>
-    <div class="card-content">
-      <div class="card-top"><span class="tag ${regionClass(item.region)}">${item.region}</span><span class="card-date">${formatDate(item.date)}</span></div>
-      <div class="card-title">${item.title}</div>
-      <div class="card-summary">${item.summary||''}</div>
-      <div class="card-meta"><span class="card-source">${item.source}</span><span class="card-link">Leer →</span></div>
+    <span class="feat-badge">DESTACADO</span>
+    <div class="cc">
+      <div class="ctop"><span class="tag ${tc}">${item.category}</span><span class="cdate">${fmtDate(item.date)}</span></div>
+      <div class="ct">${item.title}</div>
+      <div class="cs">${item.summary||''}</div>
+      <div class="cm"><span class="csrc">${item.source}</span><span class="clink">Leer →</span></div>
     </div></a>`;
   return `<a class="card" href="${item.url}" target="_blank" rel="noopener">
-    <div class="card-top"><span class="tag ${regionClass(item.region)}">${item.region}</span><span class="card-date">${formatDate(item.date)}</span></div>
-    <div class="card-title">${item.title}</div>
-    <div class="card-summary">${item.summary||''}</div>
-    <div class="card-meta"><span class="card-source">${item.source}</span><span class="card-link">Leer →</span></div>
+    <div class="ctop"><span class="tag ${tc}">${item.category}</span><span class="cdate">${fmtDate(item.date)}</span></div>
+    <div class="ct">${item.title}</div>
+    <div class="cs">${item.summary||''}</div>
+    <div class="cm"><span class="csrc">${item.source}</span><span class="clink">Leer →</span></div>
     </a>`;
 }
 
 function applyFilters() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  let filtered = activeRegion === 'all' ? allItems : allItems.filter(i => i.region === activeRegion);
-  if (q) filtered = filtered.filter(i => i.title.toLowerCase().includes(q)||(i.summary||'').toLowerCase().includes(q)||i.source.toLowerCase().includes(q));
+  const q = (document.getElementById('searchInput').value || '').toLowerCase();
+  let f = activeCat === 'all' ? allItems : allItems.filter(i => i.category === activeCat);
+  if (q) f = f.filter(i => i.title.toLowerCase().includes(q)||(i.summary||'').toLowerCase().includes(q)||i.source.toLowerCase().includes(q));
+  document.getElementById('visibleCount').textContent = f.length;
   const grid = document.getElementById('newsGrid');
-  document.getElementById('visibleCount').textContent = filtered.length;
-  grid.innerHTML = filtered.length === 0
-    ? `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🔭</div><h3>Sin resultados</h3></div>`
-    : filtered.map((item,i) => renderCard(item, i===0)).join('');
+  grid.innerHTML = f.length === 0
+    ? `<div class="empty" style="grid-column:1/-1"><div class="ei">🔭</div><h3>Sin resultados</h3><p>Probá con otros términos.</p></div>`
+    : f.map((item,i) => renderCard(item, i===0)).join('');
 }
 
-function setRegion(btn) {
-  activeRegion = btn.dataset.region;
-  document.querySelectorAll('[data-region]').forEach(b => b.classList.remove('active'));
+function setCat(btn) {
+  activeCat = btn.dataset.cat;
+  document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   applyFilters();
 }
-function toggleSources() {
-  sourcesOpen = !sourcesOpen;
-  document.getElementById('sourcesPanel').classList.toggle('open', sourcesOpen);
-  document.querySelector('.sources-toggle').textContent = (sourcesOpen?'▾ ':'▸ ')+'Ver estado de fuentes';
+function toggleSrc() {
+  srcOpen = !srcOpen;
+  document.getElementById('srcPanel').classList.toggle('open', srcOpen);
+  document.querySelector('.src-toggle').textContent = (srcOpen?'▾ ':'▸ ')+'Estado de fuentes';
 }
+
 async function loadNews() {
   const dot = document.getElementById('statusDot');
-  dot.className = 'status-dot loading';
+  dot.className = 'dot loading';
   try {
-    const res = await fetch('/api/news?limit=80');
-    const data = await res.json();
+    const data = await (await fetch('/api/news?limit=100')).json();
     allItems = data.items || [];
-    arNewsList = allItems.filter(i => i.region === 'Argentina');
     document.getElementById('stat-total').textContent = allItems.length;
     document.getElementById('last-update').textContent = data.lastUpdated
       ? `↻ ${new Date(data.lastUpdated).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}` : '';
-    dot.className = 'status-dot live';
+    dot.className = 'dot live';
     applyFilters();
     loadSources();
   } catch(err) {
-    dot.className = 'status-dot';
-    document.getElementById('newsGrid').innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">⚠️</div><h3>Error de conexión</h3></div>`;
+    dot.className = 'dot';
+    document.getElementById('newsGrid').innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">⚠️</div><h3>Error de conexión</h3><p>Verificá que el servidor esté corriendo.</p></div>`;
   }
 }
 async function loadSources() {
   try {
-    const sources = await (await fetch('/api/sources')).json();
-    document.getElementById('sourcesList').innerHTML = sources.map(s =>
-      `<div class="source-pill ${s.status}"><span class="source-dot ${s.status}"></span>${s.name} <span style="opacity:0.5;font-size:0.65rem">${s.region}</span></div>`
+    const src = await (await fetch('/api/sources')).json();
+    document.getElementById('srcList').innerHTML = src.map(s =>
+      `<div class="src-pill ${s.status}"><span class="sdot ${s.status}"></span>${s.name}</div>`
     ).join('');
   } catch(e){}
 }
 async function forceRefresh() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled=true; btn.textContent='↻ ACTUALIZANDO...';
-  document.getElementById('statusDot').className = 'status-dot loading';
+  document.getElementById('statusDot').className = 'dot loading';
   try { await fetch('/api/refresh',{method:'POST'}); await loadNews(); } catch(e){}
   btn.disabled=false; btn.textContent='↻ ACTUALIZAR';
 }
 
-/* ── CLIENTES TAB ── */
+/* ── FILE UPLOAD ── */
 function handleDrop(e) {
   e.preventDefault();
-  document.getElementById('dropZone').classList.remove('dragover');
+  document.getElementById('dropZone').classList.remove('drag');
   if (e.dataTransfer.files[0]) parseFile(e.dataTransfer.files[0]);
 }
 function handleFileInput(e) { if (e.target.files[0]) parseFile(e.target.files[0]); }
 
+function showErr(msg) {
+  const el = document.getElementById('uploadErr');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+
 function parseFile(file) {
-  const errEl = document.getElementById('uploadError');
-  errEl.style.display = 'none';
+  showErr('');
   const ext = file.name.split('.').pop().toLowerCase();
   const reader = new FileReader();
+  reader.onerror = () => showErr('No se pudo leer el archivo.');
   reader.onload = function(e) {
     try {
       let rows;
@@ -428,77 +442,105 @@ function parseFile(file) {
         const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
         rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
       }
-      const norm = obj => { const o={}; for(const k of Object.keys(obj)) o[k.toLowerCase().trim()]=String(obj[k]).trim(); return o; };
-      const clients = rows.map(norm).filter(r => r.cuit && r.nombre && r.rubro).map(r => ({
-        cuit: r.cuit, nombre: r.nombre, rubro: r.rubro,
-        segmento: (r.segmento||'PYME').toUpperCase()
-      }));
-      if (!clients.length) { errEl.textContent='No se encontraron filas válidas. Verificá columnas: CUIT, NOMBRE, RUBRO, SEGMENTO'; errEl.style.display='block'; return; }
+      // Normalizar keys
+      const norm = obj => { const o={}; for(const k of Object.keys(obj)) o[k.toLowerCase().replace(/\s+/g,'')]=String(obj[k]).trim(); return o; };
+      const clients = rows.map(norm).filter(r => (r.cuit||r['cuit/cuil']) && r.nombre && r.rubro).map(r => ({
+        cuit:     (r.cuit || r['cuit/cuil'] || '').replace(/\s/g,''),
+        nombre:   r.nombre,
+        rubro:    r.rubro,
+        segmento: (r.segmento || 'PYME').toUpperCase().trim()
+      })).filter(r => r.cuit && r.nombre);
+
+      if (!clients.length) {
+        showErr('No se encontraron filas válidas. Asegurate de tener columnas: CUIT, NOMBRE, RUBRO, SEGMENTO');
+        return;
+      }
       uploadClients(clients);
-    } catch(err) { errEl.textContent='Error al parsear: '+err.message; errEl.style.display='block'; }
+    } catch(err) {
+      showErr('Error al leer el archivo: ' + err.message);
+    }
   };
-  ext === 'csv' ? reader.readAsText(file,'UTF-8') : reader.readAsArrayBuffer(file);
+  ext === 'csv' ? reader.readAsText(file, 'UTF-8') : reader.readAsArrayBuffer(file);
 }
 
 async function uploadClients(clients) {
-  const errEl = document.getElementById('uploadError');
+  showErr('');
   try {
-    const res = await fetch('/api/clients',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clients})});
+    const res = await fetch('/api/clients', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clients })
+    });
+    // Verificar que la respuesta es JSON antes de parsear
+    const ct = res.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) {
+      const text = await res.text();
+      throw new Error('Respuesta inesperada del servidor: ' + text.slice(0,100));
+    }
     const data = await res.json();
-    if (!data.success) throw new Error(data.error||'Error');
+    if (!data.success) throw new Error(data.error || 'Error desconocido');
     clientsList = clients;
-    document.getElementById('uploadSection').style.display='none';
-    document.getElementById('clientsBar').style.display='flex';
-    document.getElementById('clientsCountBadge').textContent=`${data.loaded} clientes`;
-    document.getElementById('clientsBarText').textContent='Cartera cargada · Listo para generar inteligencia';
+    document.getElementById('uploadSection').style.display = 'none';
+    document.getElementById('cliBar').style.display = 'flex';
+    document.getElementById('cliBadge').textContent = `${data.loaded} clientes`;
+    document.getElementById('cliTxt').textContent = 'Cartera cargada · Listo para generar inteligencia';
     renderPreview();
-  } catch(err) { errEl.textContent='Error al cargar: '+err.message; errEl.style.display='block'; }
+  } catch(err) {
+    showErr('Error al cargar: ' + err.message);
+  }
 }
 
 function renderPreview() {
-  document.getElementById('matchResultsArea').innerHTML = `
-    <div style="border:1.5px solid var(--bind-border);border-radius:10px;overflow:hidden">
-      <div style="background:var(--bind-navy);color:var(--bind-white);padding:0.75rem 1.25rem;font-family:var(--font-mono);font-size:0.75rem;font-weight:700">
-        PREVIEW — ${clientsList.length} clientes cargados
-      </div>
-      <div style="max-height:360px;overflow-y:auto">
+  document.getElementById('matchArea').innerHTML = `
+    <div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden">
+      <div style="background:var(--navy);color:var(--white);padding:0.75rem 1.25rem;font-family:var(--mono);font-size:0.73rem;font-weight:700">PREVIEW — ${clientsList.length} clientes</div>
+      <div style="max-height:350px;overflow-y:auto">
         ${clientsList.map(c=>`
-          <div style="padding:0.6rem 1.25rem;border-bottom:1px solid var(--bind-border);display:flex;align-items:center;justify-content:space-between;gap:1rem">
-            <div><div style="font-weight:600;font-size:0.85rem">${c.nombre}</div><div style="font-size:0.72rem;color:var(--bind-mid)">${c.cuit} · ${c.rubro}</div></div>
-            <span class="seg-badge ${c.segmento}">${c.segmento}</span>
+          <div style="padding:0.6rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem">
+            <div><div style="font-weight:600;font-size:0.84rem">${c.nombre}</div><div style="font-size:0.7rem;color:var(--mid)">${c.cuit} · ${c.rubro}</div></div>
+            <span class="seg ${c.segmento}">${c.segmento}</span>
           </div>`).join('')}
       </div>
     </div>`;
 }
 
 function clearClients() {
-  fetch('/api/clients',{method:'DELETE'});
+  fetch('/api/clients',{method:'DELETE'}).catch(()=>{});
   clientsList=[]; matchData=null;
   document.getElementById('uploadSection').style.display='block';
-  document.getElementById('clientsBar').style.display='none';
-  document.getElementById('viewToggleSection').style.display='none';
-  document.getElementById('matchResultsArea').innerHTML='';
+  document.getElementById('cliBar').style.display='none';
+  document.getElementById('viewSection').style.display='none';
+  document.getElementById('matchArea').innerHTML='';
   document.getElementById('fileInput').value='';
-  document.getElementById('runMatchBtn').textContent='⚡ GENERAR INTELIGENCIA';
+  document.getElementById('runBtn').textContent='⚡ GENERAR INTELIGENCIA';
+  document.getElementById('runBtn').disabled=false;
+  showErr('');
 }
 
+/* ── INTELLIGENCE ── */
 async function runIntelligence() {
   if (!clientsList.length) return;
-  if (!arNewsList.length) { alert('No hay noticias AR cargadas aún. Esperá y reintentá.'); return; }
-  const btn = document.getElementById('runMatchBtn');
+  if (!allItems.length) { showErr('No hay noticias cargadas aún. Esperá unos segundos y reintentá.'); return; }
+  const btn = document.getElementById('runBtn');
   btn.disabled=true; btn.textContent='⏳ PROCESANDO...';
-  document.getElementById('viewToggleSection').style.display='none';
-  document.getElementById('matchResultsArea').innerHTML=`
-    <div class="generating-indicator">
-      <div class="generating-dots"><span></span><span></span><span></span></div>
-      Generando inteligencia comercial con IA para ${clientsList.length} clientes...
+  document.getElementById('viewSection').style.display='none';
+  document.getElementById('matchArea').innerHTML=`
+    <div class="gen-ind">
+      <div class="gdots"><span></span><span></span><span></span></div>
+      Procesando ${clientsList.length} cliente${clientsList.length!==1?'s':''}...
     </div>`;
 
   matchData = { byClient:{}, byNews:{} };
   try {
     for (const client of clientsList) {
-      const res = await fetch('/api/match/client-to-news',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cuit:client.cuit})});
+      const res = await fetch('/api/match/client-to-news', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({cuit: client.cuit})
+      });
+      const ct = res.headers.get('content-type')||'';
+      if (!ct.includes('application/json')) throw new Error('El servidor no devolvió JSON. Verificá que el server esté corriendo correctamente.');
       const data = await res.json();
+      if (data.error) throw new Error(data.error);
       matchData.byClient[client.cuit] = data;
       if (data.matches) {
         for (const m of data.matches) {
@@ -509,103 +551,102 @@ async function runIntelligence() {
       }
     }
   } catch(err) {
-    document.getElementById('matchResultsArea').innerHTML=`<div class="empty-state"><div class="icon">⚠️</div><h3>Error al generar</h3><p>${err.message}</p></div>`;
+    document.getElementById('matchArea').innerHTML=`<div class="empty"><div class="ei">⚠️</div><h3>Error al generar</h3><p>${err.message}</p></div>`;
     btn.disabled=false; btn.textContent='⚡ GENERAR INTELIGENCIA'; return;
   }
 
   const total = Object.values(matchData.byClient).reduce((a,d)=>a+(d.matches?.length||0),0);
-  document.getElementById('matchSummary').textContent=`${total} oportunidades · ${arNewsList.length} noticias AR`;
-  document.getElementById('viewToggleSection').style.display='block';
+  document.getElementById('matchSum').textContent=`${total} oportunidades identificadas`;
+  document.getElementById('viewSection').style.display='block';
   setView('by-client');
   btn.disabled=false; btn.textContent='⚡ REGENERAR';
 }
 
-function setView(view) {
-  currentView=view;
-  document.getElementById('viewByClientBtn').classList.toggle('active', view==='by-client');
-  document.getElementById('viewByNewsBtn').classList.toggle('active', view==='by-news');
-  view==='by-client' ? renderByClient() : renderByNews();
+/* ── VIEWS ── */
+function setView(v) {
+  currentView=v;
+  document.getElementById('vbClient').classList.toggle('active',v==='by-client');
+  document.getElementById('vbNews').classList.toggle('active',v==='by-news');
+  v==='by-client' ? renderByClient() : renderByNews();
 }
 
-function renderMatchCard(news, insight, clientOverride) {
+function matchCard(news, insight, clientOvr) {
   if (!insight) return '';
   const rel=(insight.relevancia||'MEDIA').toLowerCase();
   return `<div class="match-card ${rel}">
-    <div class="match-header">
+    <div class="mhdr">
       <div>
-        ${clientOverride?`<div class="match-client-name">${clientOverride.nombre}</div><div class="match-client-meta">${clientOverride.rubro} · CUIT ${clientOverride.cuit}</div>`:''}
-        ${news?`<div style="font-size:0.78rem;margin-top:4px"><a href="${news.url}" target="_blank" style="color:var(--bind-blue);font-weight:600">${news.title}</a> <span style="color:var(--bind-mid)">· ${news.source}</span></div>`:''}
+        ${clientOvr?`<div class="mn">${clientOvr.nombre}</div><div class="mm">${clientOvr.rubro} · CUIT ${clientOvr.cuit}</div>`:''}
+        ${news?`<div style="font-size:0.76rem;margin-top:4px"><a href="${news.url}" target="_blank" style="color:var(--blue);font-weight:600">${news.title}</a> <span style="color:var(--mid)">· ${news.source}</span></div>`:''}
       </div>
-      <span class="relevancia-badge ${rel}">● ${insight.relevancia}</span>
+      <span class="rel ${rel}">● ${insight.relevancia}</span>
     </div>
-    ${insight.oportunidad?`<div class="match-oportunidad">💡 ${insight.oportunidad}</div>`:''}
-    ${insight.pitch?`<div class="match-pitch">${insight.pitch}</div>`:''}
-    ${insight.accion?`<div class="match-accion">${insight.accion}</div>`:''}
+    ${insight.oportunidad?`<div class="mop">💡 ${insight.oportunidad}</div>`:''}
+    ${insight.pitch?`<div class="mpitch">${insight.pitch}</div>`:''}
+    ${insight.accion?`<div class="mac">${insight.accion}</div>`:''}
   </div>`;
 }
 
 function renderByClient() {
-  const area = document.getElementById('matchResultsArea');
-  if (!matchData || !clientsList.length) return;
-  let activeCuit = clientsList[0]?.cuit;
+  const area = document.getElementById('matchArea');
+  if (!matchData||!clientsList.length) return;
+  let cur = clientsList[0]?.cuit;
 
   function build(cuit) {
-    const data = matchData.byClient[cuit] || {};
-    const matches = data.matches || [];
-    const sidebar = clientsList.map(c => {
-      const cnt = (matchData.byClient[c.cuit]?.matches||[]).length;
-      return `<div class="client-list-item ${c.cuit===cuit?'active':''}" onclick="selectClient('${c.cuit}')">
+    const data = matchData.byClient[cuit]||{};
+    const matches = data.matches||[];
+    const cl = clientsList.find(c=>c.cuit===cuit);
+    const sidebar = clientsList.map(c=>{
+      const cnt=(matchData.byClient[c.cuit]?.matches||[]).length;
+      return `<div class="cli-item ${c.cuit===cuit?'active':''}" onclick="window._selClient('${c.cuit}')">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-          <span class="cli-name">${c.nombre}</span>
-          <span class="seg-badge ${c.segmento}">${c.segmento}</span>
+          <span class="cin">${c.nombre}</span><span class="seg ${c.segmento}">${c.segmento}</span>
         </div>
-        <div class="cli-meta">${c.rubro} · <strong style="color:var(--bind-blue)">${cnt}</strong> oportunidad${cnt!==1?'es':''}</div>
+        <div class="cim">${c.rubro} · <strong style="color:var(--blue)">${cnt}</strong> op${cnt!==1?'s':''}</div>
       </div>`;
     }).join('');
-    const matchesHtml = matches.length===0
-      ? `<div class="empty-state"><div class="icon">🔍</div><h3>Sin oportunidades</h3><p>No hay noticias AR relevantes para este cliente esta semana.</p></div>`
-      : matches.map(m => renderMatchCard(m.news, m.insight, null)).join('');
+    const html = matches.length===0
+      ? `<div class="empty"><div class="ei">🔍</div><h3>Sin oportunidades</h3><p>No hay noticias bancarias relevantes para este cliente esta semana.</p></div>`
+      : matches.map(m=>matchCard(m.news,m.insight,null)).join('');
     area.innerHTML=`<div class="intel-layout">
-      <div class="client-sidebar">
-        <div class="client-sidebar-header">CLIENTES (${clientsList.length})</div>
-        ${sidebar}
-      </div>
+      <div class="cli-sidebar"><div class="cli-sbhdr">CLIENTES (${clientsList.length})</div>${sidebar}</div>
       <div>
         <div style="margin-bottom:1rem">
-          <div style="font-family:var(--font-mono);font-weight:700;font-size:0.9rem;margin-bottom:4px">${data.client?.nombre||clientsList.find(c=>c.cuit===cuit)?.nombre||''}</div>
-          <div style="font-size:0.78rem;color:var(--bind-mid)">${data.client?.rubro||clientsList.find(c=>c.cuit===cuit)?.rubro||''} · CUIT ${cuit}</div>
+          <div style="font-family:var(--mono);font-weight:700;font-size:0.9rem;margin-bottom:3px">${cl?.nombre||''}</div>
+          <div style="font-size:0.76rem;color:var(--mid)">${cl?.rubro||''} · CUIT ${cuit} · <span class="seg ${cl?.segmento||'PYME'}">${cl?.segmento||'PYME'}</span></div>
         </div>
-        ${matchesHtml}
+        ${html}
       </div>
     </div>`;
   }
-  build(activeCuit);
-  window.selectClient = (cuit) => build(cuit);
+  build(cur);
+  window._selClient = (cuit) => build(cuit);
 }
 
 function renderByNews() {
-  const area = document.getElementById('matchResultsArea');
+  const area = document.getElementById('matchArea');
   const entries = Object.values(matchData?.byNews||{});
-  if (!entries.length) {
-    area.innerHTML=`<div class="empty-state"><div class="icon">📰</div><h3>Sin noticias con matches</h3><p>No hay coincidencias entre las noticias AR y tu cartera.</p></div>`;
+  if (!entries.length){
+    area.innerHTML=`<div class="empty"><div class="ei">📰</div><h3>Sin coincidencias</h3><p>No hay noticias bancarias que matcheen con tu cartera esta semana.</p></div>`;
     return;
   }
   area.innerHTML=`<div>${entries.map((e,i)=>`
     <div class="ar-news-item">
-      <div class="ar-news-header" onclick="toggleNews(${i})">
+      <div class="ar-news-hdr" onclick="window._toggleNews(${i})">
         <div style="flex:1">
-          <div class="ar-news-title">${e.news.title}</div>
-          <div class="ar-news-meta">${e.news.source} · ${formatDate(e.news.date)} · <span style="color:var(--bind-blue);font-weight:700">${e.clients.length} cliente${e.clients.length!==1?'s':''} aplicables</span></div>
+          <div class="ar-news-t">${e.news.title}</div>
+          <div class="ar-news-meta">${e.news.source} · ${fmtDate(e.news.date)} · <strong style="color:var(--blue)">${e.clients.length} cliente${e.clients.length!==1?'s':''} aplicables</strong></div>
         </div>
-        <span class="ar-news-expand">▸ VER</span>
+        <span class="ar-expand">▸ VER MATCHES</span>
       </div>
-      <div class="ar-news-matches" id="nm-${i}">
-        ${e.clients.map(({client,insight})=>renderMatchCard(null,insight,client)).join('')}
+      <div class="ar-matches" id="nm-${i}">
+        ${e.clients.map(({client,insight})=>matchCard(null,insight,client)).join('')}
       </div>
     </div>`).join('')}</div>`;
-  window.toggleNews = (i) => document.getElementById(`nm-${i}`).classList.toggle('open');
+  window._toggleNews = (i) => document.getElementById(`nm-${i}`).classList.toggle('open');
 }
 
+/* ── INIT ── */
 setInterval(loadNews, 5*60*1000);
 loadNews();
 </script>
